@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int cycleLength = 28;
   int daysRemaining = 0;
   int? currentDayInPeriod;
+  DateTime _currentDate = DateTime.now();
 
   @override
   void initState() {
@@ -45,6 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return diff > 0 ? diff : 0;
   }
 
+  void _navigateDate(int days) {
+    setState(() {
+      _currentDate = _currentDate.add(Duration(days: days));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,13 +77,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 IconButton(
                   icon: Icon(Icons.notifications, color: Colors.white, size: 32),
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
             SizedBox(height: 50),
+            
+            // 📅 تاريخ اليوم بتنسيق أوضح
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+                  onPressed: () => _navigateDate(-1),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    DateFormat('dd MMM yyyy').format(_currentDate),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 30),
+                  onPressed: () => _navigateDate(1),
+                ),
+              ],
+            ),
+            SizedBox(height: 60),
 
+            // 🌸 Period Cycle Display (Bigger Box)
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(30),
@@ -106,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () { },
+                    onPressed: () {},
                     child: Text(
                       "Change Period Date",
                       style: TextStyle(color: Colors.pink, fontSize: 18),
@@ -116,35 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(3, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "Next Period Starts In",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "$daysRemaining days",
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ],
               ),
